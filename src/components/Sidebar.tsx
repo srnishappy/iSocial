@@ -14,8 +14,6 @@ async function Sidebar() {
 
   const user = await getUserByClerkId(authUser.id);
   if (!user) return null;
-  // console.log('log user', user);
-  // console.log('log authUser', authUser);
 
   return (
     <div className="sticky top-20">
@@ -26,7 +24,7 @@ async function Sidebar() {
               href={`/profile/${user.username}`}
               className="flex flex-col items-center justify-center"
             >
-              <Avatar className="w-20 h-20 border-2 ">
+              <Avatar className="w-20 h-20 border-2">
                 <AvatarImage src={user.image || '/avatar.png'} />
               </Avatar>
 
@@ -42,13 +40,18 @@ async function Sidebar() {
 
             <div className="w-full">
               <Separator className="my-4" />
-              <div className="flex justify-between">
-                <div>
+              <div className="flex justify-between text-center">
+                <div className="flex-1">
+                  <p className="font-medium">{user._count.posts}</p>
+                  <p className="text-xs text-muted-foreground">Posts</p>
+                </div>
+                <Separator orientation="vertical" />
+                <div className="flex-1">
                   <p className="font-medium">{user._count.following}</p>
                   <p className="text-xs text-muted-foreground">Following</p>
                 </div>
                 <Separator orientation="vertical" />
-                <div>
+                <div className="flex-1">
                   <p className="font-medium">{user._count.followers}</p>
                   <p className="text-xs text-muted-foreground">Followers</p>
                 </div>
