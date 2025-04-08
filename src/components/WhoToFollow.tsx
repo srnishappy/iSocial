@@ -73,8 +73,7 @@ async function WhoToFollow() {
                   </p>
                 </div>
               </div>
-              {/* ปุ่ม Follow (สมมติว่าใช้ Button แทน FollowButton) */}
-              <FollowButton />
+              <FollowButton userId={user.id} />
             </div>
           ))}
         </div>
