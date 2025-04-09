@@ -25,7 +25,7 @@ export function DeleteAlertDialog({
   isDeleting,
   onDelete,
   title = 'Delete Post',
-  description = 'This action cannot be undone.',
+  description = 'Are you sure you want to delete this post?',
 }: DeleteAlertDialogProps) {
   return (
     <AlertDialog>
