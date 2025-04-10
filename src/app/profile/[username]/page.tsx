@@ -14,9 +14,10 @@ interface PageProps {
   };
 }
 
+// เปลี่ยนการใช้ params โดยการ await ก่อนใช้งาน
 export async function generateMetadata({ params }: PageProps) {
-  // await params ก่อนการใช้งาน
-  const { username } = await params; // <-- เพิ่มการใช้ await ที่ params
+  // await ที่ params
+  const { username } = await params; // <-- เพิ่ม await ที่ params
 
   const user = await getProfileByUsername(username);
   if (!user) return;
@@ -28,8 +29,8 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 async function ProfilePageServer({ params }: PageProps) {
-  // await params ก่อนการใช้งาน
-  const { username } = await params; // <-- เพิ่มการใช้ await ที่ params
+  // await ที่ params
+  const { username } = await params; // <-- เพิ่ม await ที่ params
 
   const user = await getProfileByUsername(username);
 
