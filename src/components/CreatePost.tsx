@@ -1,4 +1,5 @@
 'use client';
+
 import { useUser } from '@clerk/nextjs';
 import { useState, useRef } from 'react';
 import { Card, CardContent } from './ui/card';
@@ -15,8 +16,8 @@ import { Button } from './ui/button';
 import { createPost } from '@/actions/post.action';
 import toast from 'react-hot-toast';
 import ImageUpload from './ui/ImageUpload';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import { Picker } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
 
 function CreatePost() {
   const { user } = useUser();
@@ -24,18 +25,17 @@ function CreatePost() {
   const [imageUrl, setImageUrl] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // เพิ่ม state สำหรับ Picker
-  const textareaRef = useRef(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
-    setContent(newContent);
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
   };
 
-  const handleEmojiSelect = (emoji) => {
-    setContent((prev) => prev + emoji.native); // เพิ่มอิโมจิที่เลือกเข้าไปใน textarea
-    setShowEmojiPicker(false); // ปิด Picker หลังเลือก
-    if (textareaRef.current) textareaRef.current.focus(); // โฟกัสกลับไปที่ textarea
+  const handleEmojiSelect = (emoji: any) => {
+    setContent((prev) => prev + emoji.native);
+    setShowEmojiPicker(false);
+    textareaRef.current?.focus();
   };
 
   const handleSubmit = async () => {
@@ -61,17 +61,11 @@ function CreatePost() {
     }
   };
 
-  const focusTextarea = () => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  };
-
   return (
-    <Card className="mb-6 shadow-md transition-all hover:shadow-lg">
+    <Card className="mb-6 shadow-md transition-all hover:shadow-lg relative">
       <CardContent className="pt-6">
         <div className="space-y-4">
-          <div className="flex space-x-4" onClick={focusTextarea}>
+          <div className="flex space-x-4" onClick={() => textareaRef.current?.focus()}>
             <Avatar className="w-12 h-12 ring-2 ring-primary/20">
               <AvatarImage src={user?.imageUrl || '/avatar.png'} />
             </Avatar>
@@ -90,9 +84,7 @@ function CreatePost() {
           {(showImageUpload || imageUrl) && (
             <div className="border rounded-lg p-4 relative">
               {!imageUrl && (
-                <p className="text-sm text-muted-foreground mb-2">
-                  Add your image
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">Add your image</p>
               )}
               <ImageUpload
                 endpoint="postImage"
@@ -116,11 +108,10 @@ function CreatePost() {
           )}
 
           {showEmojiPicker && (
-            <div className="absolute z-10">
+            <div className="absolute z-10 mt-2">
               <Picker
-                data={data}
                 onEmojiSelect={handleEmojiSelect}
-                theme="light" // หรือ "dark" ตามที่คุณต้องการ
+                theme="light"
               />
             </div>
           )}
@@ -144,7 +135,7 @@ function CreatePost() {
                 variant="ghost"
                 size="sm"
                 className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)} // แสดง/ซ่อน Picker
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 disabled={isPosting}
                 title="Add emoji"
               >
