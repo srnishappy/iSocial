@@ -1,3 +1,5 @@
+// app/profile/[username]/page.tsx
+
 import {
   getProfileByUsername,
   getUserLikedPosts,
@@ -5,29 +7,26 @@ import {
   isFollowing,
 } from '@/actions/profile.action';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import ProfilePageClient from './ProfilePageClient';
 
-// 👇 แบบนี้ Next.js เข้าใจแน่นอน
-export async function generateMetadata({
-  params,
-}: {
-  params: { username: string };
-}) {
+type Props = {
+  params: {
+    username: string;
+  };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const user = await getProfileByUsername(params.username);
   if (!user) return {};
 
   return {
-    title: `${user.name ?? user.username}`,
-    description: user.bio || `Check out ${user.username}'s profile.`,
+    title: user.name ?? user.username,
+    description: user.bio ?? `Check out ${user.username}'s profile.`,
   };
 }
 
-// 👇 inline type เช่นกัน
-export default async function Page({
-  params,
-}: {
-  params: { username: string };
-}) {
+export default async function Page({ params }: Props) {
   const user = await getProfileByUsername(params.username);
   if (!user) notFound();
 

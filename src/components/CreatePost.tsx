@@ -76,9 +76,6 @@ function CreatePost() {
               <AvatarImage src={user?.imageUrl || '/avatar.png'} />
             </Avatar>
             <div className="flex-1">
-              <div className="text-sm font-medium mb-1">
-                {user?.fullName || 'You'}
-              </div>
               <Textarea
                 ref={textareaRef}
                 placeholder="What's on your mind?"
