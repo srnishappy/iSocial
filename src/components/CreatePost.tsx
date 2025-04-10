@@ -5,19 +5,11 @@ import { useState, useRef } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Textarea } from './ui/textarea';
-import {
-  ImageIcon,
-  Loader2Icon,
-  SendIcon,
-  XIcon,
-  SmileIcon,
-} from 'lucide-react';
+import { ImageIcon, Loader2Icon, SendIcon, XIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { createPost } from '@/actions/post.action';
 import toast from 'react-hot-toast';
 import ImageUpload from './ui/ImageUpload';
-import { Picker } from 'emoji-mart';
-import 'emoji-mart/css/emoji-mart.css';
 
 function CreatePost() {
   const { user } = useUser();
@@ -25,17 +17,10 @@ function CreatePost() {
   const [imageUrl, setImageUrl] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const textareaRef = useRef(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
-  };
-
-  const handleEmojiSelect = (emoji: any) => {
-    setContent((prev) => prev + emoji.native);
-    setShowEmojiPicker(false);
-    textareaRef.current?.focus();
   };
 
   const handleSubmit = async () => {
@@ -48,10 +33,7 @@ function CreatePost() {
         setContent('');
         setImageUrl('');
         setShowImageUpload(false);
-        toast.success('Post created successfully!', {
-          icon: '🎉',
-          duration: 3000,
-        });
+        toast.success('Post created successfully!');
       }
     } catch (error) {
       console.error('Failed to create post:', error);
@@ -61,11 +43,17 @@ function CreatePost() {
     }
   };
 
+  const focusTextarea = () => {
+    if (textareaRef.current) {
+      (textareaRef.current as HTMLTextAreaElement).focus();
+    }
+  };
+
   return (
-    <Card className="mb-6 shadow-md transition-all hover:shadow-lg relative">
+    <Card className="mb-6 shadow-md transition-all hover:shadow-lg">
       <CardContent className="pt-6">
         <div className="space-y-4">
-          <div className="flex space-x-4" onClick={() => textareaRef.current?.focus()}>
+          <div className="flex space-x-4" onClick={focusTextarea}>
             <Avatar className="w-12 h-12 ring-2 ring-primary/20">
               <AvatarImage src={user?.imageUrl || '/avatar.png'} />
             </Avatar>
@@ -84,7 +72,9 @@ function CreatePost() {
           {(showImageUpload || imageUrl) && (
             <div className="border rounded-lg p-4 relative">
               {!imageUrl && (
-                <p className="text-sm text-muted-foreground mb-2">Add your image</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Add your image
+                </p>
               )}
               <ImageUpload
                 endpoint="postImage"
@@ -107,15 +97,6 @@ function CreatePost() {
             </div>
           )}
 
-          {showEmojiPicker && (
-            <div className="absolute z-10 mt-2">
-              <Picker
-                onEmojiSelect={handleEmojiSelect}
-                theme="light"
-              />
-            </div>
-          )}
-
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
               <Button
@@ -129,18 +110,6 @@ function CreatePost() {
               >
                 <ImageIcon className="h-5 w-5 mr-2" />
                 Photo
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                disabled={isPosting}
-                title="Add emoji"
-              >
-                <SmileIcon className="h-5 w-5 mr-2" />
-                Emoji
               </Button>
             </div>
 
