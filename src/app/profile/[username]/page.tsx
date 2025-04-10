@@ -7,7 +7,7 @@ import {
 import { notFound } from 'next/navigation';
 import ProfilePageClient from './ProfilePageClient';
 
-// ประกาศ type ให้ชัดเจน
+// ประกาศ type ของ params
 type PageProps = {
   params: {
     username: string;
@@ -15,9 +15,7 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps) {
-  // ใช้ await ก่อนเข้าถึง params
-  const { username } = await params; // ทำให้แน่ใจว่า params ถูก resolve ก่อนใช้
-
+  const { username } = params; // ไม่ต้องใช้ await ที่นี่
   const user = await getProfileByUsername(username);
   if (!user) return;
 
@@ -28,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 async function ProfilePageServer({ params }: PageProps) {
-  const { username } = await params; // ใช้ await ก่อน
+  const { username } = params; // ไม่ต้องใช้ await ที่นี่เช่นกัน
   const user = await getProfileByUsername(username);
 
   if (!user) notFound();
