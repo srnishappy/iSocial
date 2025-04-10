@@ -7,12 +7,18 @@ import {
 import { notFound } from 'next/navigation';
 import ProfilePageClient from './ProfilePageClient';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { username: string };
-}) {
-  const user = await getProfileByUsername(params.username);
+// ประกาศ type ให้ชัดเจน
+type PageProps = {
+  params: {
+    username: string;
+  };
+};
+
+export async function generateMetadata({ params }: PageProps) {
+  // ใช้ await ก่อนเข้าถึง params
+  const { username } = await params; // ทำให้แน่ใจว่า params ถูก resolve ก่อนใช้
+
+  const user = await getProfileByUsername(username);
   if (!user) return;
 
   return {
@@ -21,8 +27,9 @@ export async function generateMetadata({
   };
 }
 
-async function ProfilePageServer({ params }: { params: { username: string } }) {
-  const user = await getProfileByUsername(params.username);
+async function ProfilePageServer({ params }: PageProps) {
+  const { username } = await params; // ใช้ await ก่อน
+  const user = await getProfileByUsername(username);
 
   if (!user) notFound();
 
@@ -41,4 +48,5 @@ async function ProfilePageServer({ params }: { params: { username: string } }) {
     />
   );
 }
+
 export default ProfilePageServer;
