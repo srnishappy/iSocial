@@ -7,20 +7,14 @@ import {
 import { notFound } from 'next/navigation';
 import ProfilePageClient from './ProfilePageClient';
 
-// ประกาศ type ของ params ที่เป็น object
-interface PageProps {
-  params: {
-    username: string;
-  };
-}
-
-// เปลี่ยนการใช้ params โดยการ await ก่อนใช้งาน
-export async function generateMetadata({ params }: PageProps) {
-  // await ที่ params
-  const { username } = await params; // <-- เพิ่ม await ที่ params
-
-  const user = await getProfileByUsername(username);
-  if (!user) return;
+// 👇 แบบนี้ Next.js เข้าใจแน่นอน
+export async function generateMetadata({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const user = await getProfileByUsername(params.username);
+  if (!user) return {};
 
   return {
     title: `${user.name ?? user.username}`,
@@ -28,12 +22,13 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-async function ProfilePageServer({ params }: PageProps) {
-  // await ที่ params
-  const { username } = await params; // <-- เพิ่ม await ที่ params
-
-  const user = await getProfileByUsername(username);
-
+// 👇 inline type เช่นกัน
+export default async function Page({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const user = await getProfileByUsername(params.username);
   if (!user) notFound();
 
   const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
@@ -51,5 +46,3 @@ async function ProfilePageServer({ params }: PageProps) {
     />
   );
 }
-
-export default ProfilePageServer;
