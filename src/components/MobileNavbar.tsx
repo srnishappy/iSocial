@@ -18,7 +18,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useState } from 'react';
-import { useAuth, SignInButton, SignOutButton } from '@clerk/nextjs';
+import { useAuth, useUser, SignInButton, SignOutButton } from '@clerk/nextjs';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 
@@ -26,6 +26,10 @@ function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { isSignedIn } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { user } = useUser();
+
+  const username =
+    user?.username ?? user?.emailAddresses?.[0]?.emailAddress.split('@')[0];
 
   return (
     <div className="flex md:hidden items-center space-x-2">
@@ -51,6 +55,7 @@ function MobileNavbar() {
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col space-y-4 mt-6">
+            {/* Home */}
             <Button
               variant="ghost"
               className="flex items-center gap-3 justify-start"
@@ -64,6 +69,7 @@ function MobileNavbar() {
 
             {isSignedIn ? (
               <>
+                {/* Notifications */}
                 <Button
                   variant="ghost"
                   className="flex items-center gap-3 justify-start"
@@ -74,16 +80,20 @@ function MobileNavbar() {
                     Notifications
                   </Link>
                 </Button>
+
+                {/* Profile */}
                 <Button
                   variant="ghost"
                   className="flex items-center gap-3 justify-start"
                   asChild
                 >
-                  <Link href="/profile">
+                  <Link href={`/profile/${username}`}>
                     <UserIcon className="w-4 h-4" />
                     Profile
                   </Link>
                 </Button>
+
+                {/* Logout */}
                 <SignOutButton>
                   <Button
                     variant="ghost"

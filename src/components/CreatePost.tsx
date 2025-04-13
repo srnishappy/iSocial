@@ -5,11 +5,21 @@ import { useState, useRef } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Textarea } from './ui/textarea';
-import { ImageIcon, Loader2Icon, SendIcon, XIcon } from 'lucide-react';
+import {
+  ImageIcon,
+  Loader2Icon,
+  SendIcon,
+  XIcon,
+  SmileIcon,
+} from 'lucide-react';
 import { Button } from './ui/button';
 import { createPost } from '@/actions/post.action';
 import toast from 'react-hot-toast';
 import ImageUpload from './ui/ImageUpload';
+import dynamic from 'next/dynamic';
+
+const Picker = dynamic(() => import('@emoji-mart/react'), { ssr: false });
+import data from '@emoji-mart/data';
 
 function CreatePost() {
   const { user } = useUser();
@@ -17,6 +27,7 @@ function CreatePost() {
   const [imageUrl, setImageUrl] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef(null);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -47,6 +58,11 @@ function CreatePost() {
     if (textareaRef.current) {
       (textareaRef.current as HTMLTextAreaElement).focus();
     }
+  };
+
+  const addEmoji = (emoji: any) => {
+    setContent((prev) => prev + emoji.native);
+    setShowEmojiPicker(false);
   };
 
   return (
@@ -97,6 +113,12 @@ function CreatePost() {
             </div>
           )}
 
+          {showEmojiPicker && (
+            <div className="mt-2">
+              <Picker data={data} onEmojiSelect={addEmoji} theme="light" />
+            </div>
+          )}
+
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
               <Button
@@ -110,6 +132,18 @@ function CreatePost() {
               >
                 <ImageIcon className="h-5 w-5 mr-2" />
                 Photo
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                disabled={isPosting}
+                title="Add emoji"
+              >
+                <SmileIcon className="h-5 w-5 mr-2" />
+                Emoji
               </Button>
             </div>
 
